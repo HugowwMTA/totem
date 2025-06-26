@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Totem Interativo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>🛒 Mercado Digital</h1>
+    <p>Encontre produtos com facilidade</p>
+  </header>
+
+  <section class="search-box">
+    <input type="text" id="searchInput" placeholder="Buscar produto...">
+    <button onclick="buscarProduto()">🔍 Buscar</button>
+  </section>
+
+  <section id="resultados"></section>
+  <button id="voltarBtn" onclick="resetarBusca()">⬅️ Voltar</button>
+
+  <section class="highlights">
+    <h2>🔥 Ofertas em Destaque</h2>
+    <div class="product-list" id="destaques"></div>
+  </section>
+
+  <section class="map-link">
+    <h2>🗺️ Mapa da Loja</h2>
+    <img src="img/mapa.png" alt="Mapa da Loja">
+  </section>
+
+  <footer>
+    <p>Totem desenvolvido por Irineu Tech</p>
+  </footer>
+
+  <div id="ajudaTela">
+    <div>Precisa de ajuda? Toque na tela para começar!</div>
+    <button onclick="fecharAjuda()">Começar</button>
+  </div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>

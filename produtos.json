@@ -1,0 +1,34 @@
+[
+  {
+    "nome": "Arroz Tio João 5kg",
+    "marca": "Tio João",
+    "preco": 22.90,
+    "localizacao": "Corredor 4",
+    "destaque": true,
+    "foto": "arroz.jpg"
+  },
+  {
+    "nome": "Coca-Cola 2L",
+    "marca": "Coca-Cola",
+    "preco": 7.49,
+    "localizacao": "Geladeira Central",
+    "destaque": true,
+    "foto": "coca.jpg"
+  },
+  {
+    "nome": "Sabão OMO 1kg",
+    "marca": "OMO",
+    "preco": 11.99,
+    "localizacao": "Corredor 7",
+    "destaque": true,
+    "foto": "omo.jpg"
+  },
+  {
+    "nome": "Detergente Ypê 500ml",
+    "marca": "Ypê",
+    "preco": 2.99,
+    "localizacao": "Corredor 6",
+    "destaque": false,
+    "foto": "ype.jpg"
+  }
+]

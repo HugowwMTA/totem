@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Painel do Dono</title>
+<link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<header>
+  <h1>🔧 Painel de Gerenciamento</h1>
+  <nav>
+    <button type="button" data-target="produtosSection" class="nav-btn active">Produtos</button>
+    <button type="button" data-target="buscaSection" class="nav-btn">Busca</button>
+  </nav>
+  <p>Atualize os produtos exibidos no totem</p>
+</header>
+
+<main>
+  <section id="produtosSection" class="section-active">
+    <form id="produtoForm">
+      <input type="text" placeholder="Nome do produto" id="nome" required />
+      <input type="text" placeholder="Marca" id="marca" required />
+      <input type="number" step="0.01" placeholder="Preço" id="preco" required />
+      <input type="text" placeholder="Localização na loja" id="localizacao" required />
+      <input type="text" placeholder="URL da imagem" id="foto" required />
+      <label>
+        <input type="checkbox" id="destaque" /> Produto em destaque
+      </label>
+      <input type="hidden" id="editIndex" />
+      <button type="submit">Salvar Produto</button>
+    </form>
+
+    <div id="filtrosBusca" class="filtros-busca">
+      <input type="text" id="buscaInput" placeholder="Buscar produtos..." />
+      <select id="filtroMarca">
+        <option value="">Todas as marcas</option>
+      </select>
+      <select id="filtroDestaque">
+        <option value="">Todos</option>
+        <option value="true">Só em destaque</option>
+        <option value="false">Sem destaque</option>
+      </select>
+    </div>
+
+    <section id="listaProdutos">
+      <!-- Lista dos produtos aparecerá aqui -->
+    </section>
+  </section>
+
+  <section id="buscaSection" class="section-inactive">
+    <h2>📈 Relatório de Buscas</h2>
+    
+    <div>
+      <button id="btnExportar">Exportar CSV</button>
+      <button id="btnLimparBuscas">Limpar buscas</button>
+    </div>
+
+    <table id="tabelaBuscas">
+      <thead>
+        <tr>
+          <th>Termo</th>
+          <th>Quantidade</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyBuscas">
+        <!-- Linhas de buscas vão aparecer aqui -->
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<footer>
+  <p>Gerenciamento por Irineu Tech</p>
+</footer>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>
