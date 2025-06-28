@@ -146,7 +146,7 @@ async function aplicarConfiguracoes() {
 
       // Tempos
       tempoAfkMs = (config.tempoAFK || 60) * 1000;
-      tempoReloadMs = (config.tempoReloadHoras || 1) * 60 * 60 * 1000;
+      tempoReloadMs = (config.tempoReloadHoras || 1) 
 
       iniciarInatividade(); // reinicia com novo tempo
       agendarReload();      // agenda recarregamento
