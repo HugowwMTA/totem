@@ -1,7 +1,20 @@
 // firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  deleteDoc,
+  setDoc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {
+  getAuth
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
+// 🔐 Configurações do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyD99qCTblkAC9z0fL6hJRtjl1uwjSkx_v8",
   authDomain: "helper-totem.firebaseapp.com",
@@ -12,7 +25,20 @@ const firebaseConfig = {
   measurementId: "G-8WZ9EV6Y7R"
 };
 
+// 🔧 Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-export { db, collection, getDocs, addDoc, doc, deleteDoc, setDoc };
+// 📦 Exporta o que for necessário
+export {
+  db,
+  auth,
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  deleteDoc,
+  setDoc,
+  getDoc
+};

@@ -334,3 +334,55 @@ footer {
     gap: 0.6rem;
   }
 }
+
+/* ⚙️ Painel de Configurações */
+#configSection {
+  display: none;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  margin-top: 2rem;
+}
+
+#configSection h2 {
+  margin-bottom: 1.2rem;
+  text-align: center;
+  color: #2c3e50;
+}
+
+.config-item {
+  margin-bottom: 1.4rem;
+}
+
+.config-item label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: bold;
+}
+
+.config-item input[type="color"],
+.config-item input[type="number"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+#btnSalvarConfig {
+  background-color: #27ae60;
+  color: white;
+  padding: 0.8rem 1.6rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s;
+}
+
+#btnSalvarConfig:hover {
+  background-color: #219150;
+}

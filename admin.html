@@ -12,7 +12,7 @@
   <h1>🔧 Painel de Gerenciamento</h1>
   <nav>
     <button type="button" data-target="produtosSection" class="nav-btn active">Produtos</button>
-    <button type="button" data-target="buscaSection" class="nav-btn">Busca</button>
+    <button type="button" data-target="buscaSection" class="nav-btn">Configuração</button>
   </nav>
   <p>Atualize os produtos exibidos no totem</p>
 </header>
@@ -50,31 +50,56 @@
   </section>
 
   <section id="buscaSection" class="section-inactive">
-    <h2>📈 Relatório de Buscas</h2>
-    
-    <div>
-      <button id="btnExportar">Exportar CSV</button>
-      <button id="btnLimparBuscas">Limpar buscas</button>
-    </div>
+  <h2>⚙️ Painel de Configurações</h2>
 
-    <table id="tabelaBuscas">
-      <thead>
-        <tr>
-          <th>Termo</th>
-          <th>Quantidade</th>
-        </tr>
-      </thead>
-      <tbody id="tbodyBuscas">
-        <!-- Linhas de buscas vão aparecer aqui -->
-      </tbody>
-    </table>
-  </section>
+  <form id="configForm">
+    <label>
+      Cor Primária:
+      <input type="color" id="corPrimaria" name="corPrimaria">
+    </label>
+
+    <label>
+      Cor Secundária:
+      <input type="color" id="corSecundaria" name="corSecundaria">
+    </label>
+
+    <label>
+      Tempo de inatividade para mostrar ajuda (em segundos):
+      <input type="number" id="tempoAfk" name="tempoAfk" min="1">
+    </label>
+
+    <label>
+      Tempo para recarregar a página (em horas):
+      <input type="number" id="tempoReload" name="tempoReload" min="1">
+    </label>
+
+    <button type="submit">💾 Salvar Configurações</button>
+  </form>
+
+  <h3 style="margin-top:2rem">📈 Relatório de Buscas</h3>
+  <div>
+    <button id="btnExportar">Exportar CSV</button>
+    <button id="btnLimparBuscas">Limpar buscas</button>
+  </div>
+
+  <table id="tabelaBuscas">
+    <thead>
+      <tr>
+        <th>Termo</th>
+        <th>Quantidade</th>
+      </tr>
+    </thead>
+    <tbody id="tbodyBuscas">
+      <!-- Linhas de buscas vão aparecer aqui -->
+    </tbody>
+  </table>
+</section>
 </main>
 
 <footer>
   <p>Gerenciamento por Irineu Tech</p>
 </footer>
-
+<script type="module" src="firebase.js"></script>
 <script type="module" src="admin.js"></script>
 </body>
 </html>

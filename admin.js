@@ -1,12 +1,10 @@
-import { db, collection, getDocs, doc, deleteDoc, setDoc } from "./firebase.js";
+import { db, collection, getDocs, doc, deleteDoc, setDoc, getDoc } from "./firebase.js";
 
 const form = document.getElementById('produtoForm');
 const lista = document.getElementById('listaProdutos');
-
 const buscaInput = document.getElementById('buscaInput');
 const filtroMarca = document.getElementById('filtroMarca');
 const filtroDestaque = document.getElementById('filtroDestaque');
-
 const navButtons = document.querySelectorAll('.nav-btn');
 const produtosSection = document.getElementById('produtosSection');
 const buscaSection = document.getElementById('buscaSection');
@@ -95,7 +93,6 @@ function renderizarProdutos() {
   });
 }
 
-// 🔁 Atualiza filtros com base nas marcas dos produtos
 function atualizarFiltroMarcas() {
   const marcas = [...new Set(produtos.map(p => p.marca))].sort();
   filtroMarca.innerHTML = '<option value="">Todas as marcas</option>';
@@ -107,10 +104,8 @@ function atualizarFiltroMarcas() {
   });
 }
 
-// 📥 Submissão do formulário de produto
 form.addEventListener('submit', async e => {
   e.preventDefault();
-
   const produto = {
     nome: form.nome.value.trim(),
     marca: form.marca.value.trim(),
@@ -119,17 +114,13 @@ form.addEventListener('submit', async e => {
     foto: form.foto.value.trim(),
     destaque: form.destaque.checked
   };
-
   const editIndex = form.editIndex.value;
-
   await salvarProdutoNoFirestore(produto);
-
   if (editIndex === '') {
     produtos.push(produto);
   } else {
     produtos[editIndex] = produto;
   }
-
   form.reset();
   form.editIndex.value = '';
   atualizarFiltroMarcas();
@@ -137,7 +128,6 @@ form.addEventListener('submit', async e => {
   alert('✅ Produto salvo no Firebase!');
 });
 
-// ✏️ Edita produto
 function editarProduto(index) {
   const p = produtos[index];
   form.nome.value = p.nome;
@@ -150,30 +140,21 @@ function editarProduto(index) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 📊 Gera relatório de buscas
 async function gerarRelatorioBuscas() {
   const querySnapshot = await getDocs(collection(db, "buscas"));
   const contagem = {};
-
   querySnapshot.forEach((doc) => {
     const dados = doc.data();
     const termo = dados.termo;
     contagem[termo] = (contagem[termo] || 0) + 1;
   });
-
   const todasBuscas = Object.entries(contagem).sort((a, b) => b[1] - a[1]);
-
   const tbody = document.getElementById('tbodyBuscas');
   tbody.innerHTML = '';
-
   if (todasBuscas.length === 0) {
-    tbody.innerHTML = `
-      <tr><td colspan="2" style="text-align:center; padding: 15px; color: #999;">
-        Nenhuma busca registrada ainda.
-      </td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="2" style="text-align:center; padding: 15px; color: #999;">Nenhuma busca registrada ainda.</td></tr>`;
     return;
   }
-
   todasBuscas.forEach(([termo, qtd]) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${termo}</td><td>${qtd}</td>`;
@@ -181,12 +162,10 @@ async function gerarRelatorioBuscas() {
   });
 }
 
-// 🔁 Navegação entre abas
 navButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     navButtons.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
     if (btn.dataset.target === 'produtosSection') {
       produtosSection.classList.add('section-active');
       produtosSection.classList.remove('section-inactive');
@@ -202,11 +181,119 @@ navButtons.forEach(btn => {
   });
 });
 
-// 🎯 Eventos de filtros ao digitar/mudar
 buscaInput.addEventListener('input', renderizarProdutos);
 filtroMarca.addEventListener('change', renderizarProdutos);
 filtroDestaque.addEventListener('change', renderizarProdutos);
 
-// 🌐 Deixar funções globais (para os botões inline)
 window.editarProduto = editarProduto;
 window.removerProduto = removerProduto;
+
+// 🚀 CONFIGURAÇÕES DO SISTEMA POR USUÁRIO
+async function carregarConfiguracoes() {
+  const docRef = doc(db, "configuracoes", "padrao");
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    const config = docSnap.data();
+    document.getElementById('corPrimaria').value = config.corPrimaria || '#27ae60';
+    document.getElementById('corSecundaria').value = config.corSecundaria || '#3498db';
+    document.getElementById('tempoAfk').value = config.tempoAFK || 60;
+    document.getElementById('tempoReload').value = config.tempoReloadHoras || 6;
+
+    // Aplicar estilos ao documento
+    document.documentElement.style.setProperty('--cor-primaria', config.corPrimaria);
+    document.documentElement.style.setProperty('--cor-secundaria', config.corSecundaria);
+  } else {
+    console.log("Nenhuma configuração salva ainda.");
+  }
+}
+
+
+async function salvarConfiguracoes(config) {
+  await setDoc(doc(db, "configuracoes", "padrao"), config);
+  alert("✅ Configurações salvas com sucesso!");
+}
+
+window.addEventListener('DOMContentLoaded', carregarConfiguracoes);
+
+const configForm = document.getElementById('configForm');
+configForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const config = {
+    corPrimaria: document.getElementById('corPrimaria').value,
+    corSecundaria: document.getElementById('corSecundaria').value,
+    tempoAFK: parseInt(document.getElementById('tempoAfk').value, 10),
+    tempoReloadHoras: parseInt(document.getElementById('tempoReload').value, 10),
+  };
+
+  await salvarConfiguracoes(config);
+});
+
+document.getElementById('btnExportar').addEventListener('click', exportarBuscasCSV);
+
+async function exportarBuscasCSV() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "buscas"));
+    const contagem = {};
+
+    querySnapshot.forEach((docSnap) => {
+      const termo = docSnap.data().termo.trim();
+      contagem[termo] = (contagem[termo] || 0) + 1;
+    });
+
+    const todasBuscas = Object.entries(contagem).sort((a, b) => b[1] - a[1]);
+
+    if (todasBuscas.length === 0) {
+      alert("⚠️ Nenhuma busca registrada.");
+      return;
+    }
+
+    // CSV com separador ";"
+    let csv = "Termo;Quantidade\n";
+    todasBuscas.forEach(([termo, qtd]) => {
+      const termoLimpo = `"${termo.replace(/"/g, '""')}"`;
+      csv += `${termoLimpo};${qtd}\n`;
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "relatorio_buscas.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Erro ao exportar buscas:", err);
+    alert("❌ Erro ao exportar buscas.");
+  }
+}
+
+
+
+document.getElementById('btnLimparBuscas').addEventListener('click', limparBuscas);
+
+async function limparBuscas() {
+  if (!confirm("Tem certeza que deseja apagar TODAS as buscas registradas?")) return;
+
+  try {
+    const querySnapshot = await getDocs(collection(db, "buscas"));
+    const promises = [];
+    querySnapshot.forEach((docSnap) => {
+      promises.push(deleteDoc(doc(db, "buscas", docSnap.id)));
+    });
+    await Promise.all(promises);
+    alert("🧹 Buscas apagadas com sucesso!");
+    gerarRelatorioBuscas(); // Atualiza a tabela após limpar
+  } catch (err) {
+    console.error("Erro ao limpar buscas:", err);
+    alert("❌ Erro ao apagar as buscas.");
+  }
+}
+
+
+window.exportarBuscasCSV = exportarBuscasCSV;
+window.limparBuscas = limparBuscas;
+
+window.salvarConfiguracoes = salvarConfiguracoes;
+window.carregarConfiguracoes = carregarConfiguracoes;

@@ -1,6 +1,8 @@
-import { db, collection, addDoc, getDocs } from "./firebase.js";
+import { db, collection, addDoc, getDocs, doc, getDoc } from "./firebase.js";
 
 let produtos = [];
+let tempoAfkMs = 60000;       // valor padrão: 1 minuto
+let tempoReloadMs = 6 * 60 * 60 * 1000; // padrão: 6 horas
 
 const destaquesDiv = document.getElementById('destaques');
 const resultadosDiv = document.getElementById('resultados');
@@ -10,7 +12,6 @@ const ajudaTela = document.getElementById('ajudaTela');
 const searchInput = document.getElementById("searchInput");
 const searchButton = document.querySelector('button[onclick="buscarProduto()"]');
 
-// Desabilita busca enquanto carrega produtos
 searchInput.disabled = true;
 searchButton.disabled = true;
 
@@ -21,8 +22,6 @@ async function carregarProdutos() {
     produtos.push(doc.data());
   });
   mostrarDestaques();
-
-  // Habilita busca após carregar produtos
   searchInput.disabled = false;
   searchButton.disabled = false;
 }
@@ -38,11 +37,9 @@ function mostrarDestaques() {
 function criarCardProduto(produto) {
   const div = document.createElement("div");
   div.className = "product-card";
-
   const srcImg = produto.foto.startsWith('http://') || produto.foto.startsWith('https://') 
     ? produto.foto 
     : `img/products/${produto.foto}`;
-
   div.innerHTML = `
     <img src="${srcImg}" alt="${produto.nome}">
     <h3>${produto.nome}</h3>
@@ -68,14 +65,14 @@ function buscarProduto() {
   if (!termo) return;
 
   salvarBuscaLocal(termo);
-  salvarBuscaFirestore(termo);  // CHAMADA NOVA
+  salvarBuscaFirestore(termo);
 
   const encontrados = produtos.filter(p => {
     const nome = p.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const marca = p.marca.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     return nome.includes(termo) || marca.includes(termo);
   });
-  
+
   resultadosDiv.innerHTML = '';
   resultadosDiv.style.display = 'flex';
   voltarBtn.style.display = 'inline-block';
@@ -117,18 +114,48 @@ function iniciarInatividade() {
     tempo = setTimeout(() => {
       ajudaTela.style.display = 'flex';
       resetarBusca();
-    }, 45000);
+    }, tempoAfkMs);
   }
   resetarTimer();
+}
+
+function agendarReload() {
+  setTimeout(() => {
+    location.reload();
+  }, tempoReloadMs);
 }
 
 function fecharAjuda() {
   ajudaTela.style.display = 'none';
 }
 
-carregarProdutos();
-iniciarInatividade();
-
 window.buscarProduto = buscarProduto;
 window.resetarBusca = resetarBusca;
 window.fecharAjuda = fecharAjuda;
+
+async function aplicarConfiguracoes() {
+  try {
+    const docRef = doc(db, "configuracoes", "padrao");
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const config = docSnap.data();
+
+      // Cores
+      document.documentElement.style.setProperty('--cor-primaria', config.corPrimaria || '#27ae60');
+      document.documentElement.style.setProperty('--cor-secundaria', config.corSecundaria || '#2c3e50');
+
+      // Tempos
+      tempoAfkMs = (config.tempoAFK || 60) * 1000;
+      tempoReloadMs = (config.tempoReloadHoras || 1) * 60 * 60 * 1000;
+
+      iniciarInatividade(); // reinicia com novo tempo
+      agendarReload();      // agenda recarregamento
+    }
+  } catch (err) {
+    console.error("Erro ao carregar configurações visuais:", err);
+  }
+}
+
+// Inicialização
+carregarProdutos();
+aplicarConfiguracoes();
